@@ -18,7 +18,6 @@ class MyDigitalIdServiceProvider extends ServiceProvider
         $this->app['router']->middleware('web')->group(function () {
             $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
         });
-        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'mydigitalid');
 
         // Bolehkan <x-mydigitalid::login-button /> digunakan di mana-mana blade

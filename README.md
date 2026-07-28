@@ -42,17 +42,7 @@ composer update mzm/mydigitalid
 
 Composer akan **symlink** folder `packages/mzm/mydigitalid` ke dalam `vendor/mzm/mydigitalid` dan auto-discover `MyDigitalIdServiceProvider` (tiada perlu daftar manual dalam `bootstrap/providers.php` / `config/app.php`).
 
-### 3. Jalankan migration
-
-```bash
-php artisan migrate
-```
-
-> Package ini pernah menyimpan audit trail dalam table `mydigitalid_logs`, tetapi telah dipindah ke log file khusus (lihat [Audit Trail / Logging](#audit-trail--logging)) — data sensitif (token, NRIC) tidak lagi duduk dalam DB yang boleh diakses ramai role/admin. Migration terkini akan `dropIfExists` table tersebut jika ia wujud dari versi lama.
-
-Migration dimuatkan terus dari package (`loadMigrationsFrom`) — tiada fail migration disalin ke `database/migrations/` aplikasi utama.
-
-### 4. Tetapkan environment variables
+### 3. Tetapkan environment variables
 
 Tambah dalam `.env` aplikasi (nilai sebenar dapatkan daripada MIMOS/pentadbir MyDigital ID):
 
@@ -126,7 +116,7 @@ Berbeza dengan `ibaucar` (guna `path` repository sebab folder wujud secara fizik
 composer require mzm/mydigitalid:dev-main
 ```
 
-Composer akan **clone** (bukan symlink) repo tu ke `vendor/mzm/mydigitalid`. Auto-discovery `MyDigitalIdServiceProvider` tetap berfungsi sama seperti di `ibaucar`. Selepas itu, ikut langkah [migration](#3-jalankan-migration) dan [environment variables](#4-tetapkan-environment-variables) yang sama.
+Composer akan **clone** (bukan symlink) repo tu ke `vendor/mzm/mydigitalid`. Auto-discovery `MyDigitalIdServiceProvider` tetap berfungsi sama seperti di `ibaucar`. Selepas itu, ikut langkah [environment variables](#3-tetapkan-environment-variables) yang sama.
 
 ### Nota
 
@@ -262,9 +252,6 @@ Edit fail tersebut mengikut keperluan reka bentuk aplikasi — `<x-mydigitalid::
 packages/mzm/mydigitalid/
 ├── composer.json
 ├── config/mydigitalid.php
-├── database/migrations/
-│   ├── 2026_02_10_000000_create_mydigitalid_logs_table.php
-│   └── 2026_02_11_000000_drop_mydigitalid_logs_table.php
 ├── resources/views/components/login-button.blade.php
 ├── routes/web.php
 └── src/

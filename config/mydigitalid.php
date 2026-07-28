@@ -32,21 +32,21 @@ return [
     // Digunakan oleh controller jika ditetapkan (override 'user_provider_*' di atas).
     // Setiap NRIC pemohon/staff disemak sehingga jumpa padanan pertama.
     'user_providers' => [
+        [
+            'model' => \App\Models\User::class,
+            'credential' => 'nokp',
+            'relation' => null,
+        ],
         // [
-        //     'model' => \App\Models\User::class,
-        //     'credential' => 'nokp',
-        //     'relation' => null,
+        //     'model' => \App\Models\StaffProfile::class,
+        //     'credential' => 'no_kp',
+        //     'relation' => 'user',
         // ],
-        [
-            'model' => \App\Models\StaffProfile::class,
-            'credential' => 'no_kp',
-            'relation' => 'user',
-        ],
-        [
-            'model' => \App\Models\PemohonProfile::class,
-            'credential' => 'no_kad_pengenalan',
-            'relation' => 'user',
-        ],
+        // [
+        //     'model' => \App\Models\PemohonProfile::class,
+        //     'credential' => 'no_kad_pengenalan',
+        //     'relation' => 'user',
+        // ],
     ],
     // Nama route destinasi selepas login/berjaya diarah dari /mydigitalid/home
     'home_route' => env('MYDIGITALID_SUCCESS_REDIRECT_ROUTE', 'home'),
