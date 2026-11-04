@@ -21,10 +21,10 @@ class MyDigitalIdController extends Controller
         $uniqueTransactionId = bin2hex(random_bytes(20));
 
         // 2. Simpan Data Penting Berkaitan Token Ini
-        // Contoh: User ni asalnya nak masuk sistem 'e-Cuti'
+        // Contoh: sistem asal yang pengguna ingin masuk
         // Gunakan Cache untuk auto-expiration, kerana Session::put() tidak support chaining
         cache()->put('state_'.$uniqueTransactionId, [
-            'target_app' => $request->query('app_id'), // e.g., 'ecuti'
+            'target_app' => $request->query('app_id'), // ID sistem asal
             'ip_address' => $request->ip(),
             'created_at' => now(),
         ], now()->addMinutes(5)); // Auto-expire dalam 5 minit
@@ -148,12 +148,10 @@ class MyDigitalIdController extends Controller
         }
 
         // Jika user baru / tiada dalam sistem
-        // Option 1: Auto-Register (Ikut PDR.md kita)
-        // Option 2: Redirect ke page link (Ikut kod asal anda)
         session()->put('temp_nric', $nric);
         session()->put('temp_name', $name);
 
-        return redirect()->route('mydigitalid.notfound'); // Atau auto-register logic
+        return redirect()->route('mydigitalid.notfound');
     }
 
     // Fungsi Helper: Get Token

@@ -1,6 +1,6 @@
 {
     "name": "mzm/mydigitalid",
-    "description": "MyDigital ID (MIMOS/Keycloak OpenID Connect) SSO login integration for iBaucar.",
+    "description": "MyDigital ID (MIMOS/Keycloak OpenID Connect) SSO login integration for Laravel applications.",
     "type": "library",
     "license": "proprietary",
     "require": {
