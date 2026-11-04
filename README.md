@@ -7,7 +7,7 @@ Package ini menyediakan flow SSO penuh: redirect ke MyDigital ID → callback �
 ## Keperluan
 
 - PHP ^8.3
-- Laravel ^13.0
+- Laravel ^12.0 atau ^13.0
 - Model `App\Models\User` dengan kolum NRIC (default `nokp`, boleh ditukar — lihat [Konfigurasi](#konfigurasi))
 
 ## Pemasangan
