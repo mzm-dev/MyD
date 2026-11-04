@@ -139,6 +139,8 @@ Composer akan **clone** (bukan symlink) repo tu ke `vendor/mzm/mydigitalid`. Aut
 | `user_provider_relation` | `MYDIGITALID_USER_PROVIDER_RELATION` | `null` | Nama relation `belongsTo(User::class)` pada `user_provider_model` untuk dapatkan balik instance `User` selepas carian NRIC. Biarkan kosong jika `user_provider_model` itu sendiri ialah `User` |
 | `home_route` | `MYDIGITALID_SUCCESS_REDIRECT_ROUTE` | `home` | Nama route Laravel destinasi selepas `/mydigitalid/home` — tukar jika aplikasi lain guna nama route landing page berbeza |
 | `notfound_route` | `MYDIGITALID_NOTFOUND_REDIRECT_ROUTE` | `null` | Nama route Laravel destinasi apabila NRIC tidak dijumpai (`/mydigitalid/notfound`). Jika kosong/null, kekal `abort(404)` seperti asal |
+| `status_field` | `MYDIGITALID_STATUS_FIELD` | `null` | Kolum status pada model `User`. Jika kosong/null, status tidak disemak |
+| `active_value` | `MYDIGITALID_ACTIVE_VALUE` | `1` | Nilai `status_field` yang membenarkan log masuk. Pengguna lain dihantar ke `/login` dengan mesej ralat |
 | `log_channel` | `MYDIGITALID_LOG_CHANNEL` | `mydigitalid` | Nama log channel (`config('logging.channels.*')`) untuk audit trail. Jika aplikasi dah define channel dengan nama sama dalam `config/logging.php`, package akan guna channel itu terus |
 | `log_retention_days` | `MYDIGITALID_LOG_RETENTION_DAYS` | `30` | Bilangan hari fail log disimpan sebelum auto-dipadam — hanya terpakai pada default channel package |
 | `log_file_permission` | — (edit config selepas publish) | `0640` | Unix file permission fail log baru — hanya terpakai pada default channel package |

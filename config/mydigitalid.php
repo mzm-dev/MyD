@@ -53,6 +53,11 @@ return [
     // Nama route destinasi apabila NRIC tidak dijumpai (/mydigitalid/notfound); null = abort 404 (default)
     'notfound_route' => env('MYDIGITALID_NOTFOUND_REDIRECT_ROUTE'),
     'notfound_message' => env('MYDIGITALID_NOTFOUND_MESSAGE',"NRIC NOT FOUND"),
+    // Kolum status pada model User; null = status tidak disemak.
+    // Pengguna yang nilainya tidak sama dengan 'active_value' tidak boleh log masuk.
+    'status_field' => env('MYDIGITALID_STATUS_FIELD'),
+    'active_value' => env('MYDIGITALID_ACTIVE_VALUE', 1),
+
     // Nama log channel (config('logging.channels.*')) untuk audit trail MyDigitalID.
     // Jika channel ini belum wujud dalam config/logging.php aplikasi, service provider
     // akan daftar default channel 'daily' ke storage/logs/mydigitalid-*.log

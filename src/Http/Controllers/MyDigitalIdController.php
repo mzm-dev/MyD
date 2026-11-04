@@ -79,12 +79,16 @@ class MyDigitalIdController extends Controller
         // B. Tukar Code ke Token
         $tokenData = $this->getAccessTokenFromKeycloak($code, $returnedState);
 
-        if (! $tokenData) {
+        if (empty($tokenData->access_token)) {
             return redirect('/login')->withErrors(['error' => 'Gagal menghubungi pelayan MyDigital ID.']);
         }
 
         // C. Dapatkan User Info
         $userInfo = $this->getUserInfoFromKeycloak($tokenData->access_token, $returnedState);
+
+        if (! $userInfo) {
+            return redirect('/login')->withErrors(['error' => 'Gagal mendapatkan maklumat pengguna daripada MyDigital ID.']);
+        }
 
         // Mapping data (Pastikan nama field betul ikut spec MIMOS)
         // Biasanya: 'sub' adalah ID unik, 'preferred_username' atau 'nric' adalah IC
@@ -95,6 +99,13 @@ class MyDigitalIdController extends Controller
         // NRIC dari MyDigital ID mungkin datang berformat (dengan sempang) — bersihkan dahulu
         // supaya sepadan dengan format digit-sahaja yang disimpan di kolum no_kp / no_kad_pengenalan.
         $cleanNric = $nric ? preg_replace('/[^0-9]/', '', $nric) : null;
+
+        // Tanpa NRIC, carian menjadi "IS NULL" dan boleh memadankan pengguna lain
+        if (blank($cleanNric)) {
+            $this->logMyDigitalId('NRIC_MISSING', 'FAILED', ['error' => 'NRIC not found in userinfo'], $returnedState);
+
+            return redirect('/login')->withErrors(['error' => 'Maklumat pengenalan diri tidak diterima daripada MyDigital ID.']);
+        }
 
         // Senarai model/kolum/relation yang perlu disemak, secara berurutan, sehingga jumpa padanan.
         // Boleh ditukar via config('mydigitalid.user_providers') / .env tanpa perlu edit kod ini.
@@ -126,6 +137,12 @@ class MyDigitalIdController extends Controller
 
         // E. Logik Login Aplikasi
         if ($user) {
+            if (! $this->isActive($user)) {
+                $this->logMyDigitalId('LOGIN_FAILED', 'FAILED', ['error' => 'User inactive', 'method' => 'MyDigital ID'], $returnedState, $user->id);
+
+                return redirect('/login')->withErrors(['error' => 'Akaun anda tidak aktif. Sila hubungi pentadbir sistem.']);
+            }
+
             // Jika user wujud, login terus menggunakan getAuth (SSO login flow)
             return $this->getAuth($request, $user);
         }
@@ -178,6 +195,12 @@ class MyDigitalIdController extends Controller
 
         try {
             $response = Http::withToken($accessToken)->get($url);
+
+            if ($response->failed()) {
+                $this->logMyDigitalId('USERINFO_FAIL', 'FAILED', ['error' => 'Keycloak API Error', 'status' => $response->status()], $transactionId, null, $url);
+
+                return null;
+            }
 
             // Log User info
             $this->logMyDigitalId('USERINFO', 'SUCCESS', $this->redactPayload($response->json() ?? []), $transactionId, null, $url);
@@ -232,6 +255,16 @@ class MyDigitalIdController extends Controller
         $this->logMyDigitalId('LOGIN_FAILED', 'FAILED', ['error' => 'Gagal mendaftar masuk ke dalam sistem.', 'method' => 'MyDigital ID']);
 
         return redirect('/login')->withErrors(['error' => 'Gagal mendaftar masuk ke dalam sistem.']);
+    }
+
+    /**
+     * Helper: Semak status pengguna jika 'status_field' ditetapkan
+     */
+    private function isActive(User $user): bool
+    {
+        $statusField = config('mydigitalid.status_field');
+
+        return ! $statusField || $user->{$statusField} == config('mydigitalid.active_value');
     }
 
     /**
